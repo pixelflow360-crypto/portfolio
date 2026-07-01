@@ -1,24 +1,42 @@
 "use client"
 
+import { useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { motion, type Variants } from "framer-motion"
+import { motion, useInView, type Variants } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
 import { projects } from "@/data/projects"
 
 const card: Variants = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 40, filter: "blur(4px)" },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+    filter: "blur(0px)",
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
   },
 }
 
 export function Projects() {
+  const headerRef = useRef<HTMLDivElement>(null)
+  const gridRef = useRef<HTMLDivElement>(null)
+
+  const isHeaderInView = useInView(headerRef, { once: true, margin: "-80px 0px" })
+  const isGridInView = useInView(gridRef, { once: true, margin: "-60px 0px" })
+
   return (
     <section id="work" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-28 md:py-36">
-      <div className="mb-14 flex flex-col gap-4 md:mb-20 md:flex-row md:items-end md:justify-between">
+      {/* Section header */}
+      <motion.div
+        ref={headerRef}
+        animate={
+          isHeaderInView
+            ? { opacity: 1, y: 0, filter: "blur(0px)" }
+            : { opacity: 0, y: 48, filter: "blur(8px)" }
+        }
+        transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+        className="mb-14 flex flex-col gap-4 md:mb-20 md:flex-row md:items-end md:justify-between"
+      >
         <div>
           <p className="mb-4 text-xs uppercase tracking-[0.4em] text-muted-foreground">
             Selected Work
@@ -33,13 +51,14 @@ export function Projects() {
           Each project starts with questions, not pixels. A selection of work
           across health, collaboration, finance, and voice interaction.
         </p>
-      </div>
+      </motion.div>
 
+      {/* Project grid */}
       <motion.div
+        ref={gridRef}
+        animate={isGridInView ? "visible" : "hidden"}
         initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-60px" }}
-        transition={{ staggerChildren: 0.12 }}
+        variants={{ visible: { transition: { staggerChildren: 0.12 } } }}
         className="grid grid-cols-1 gap-6 md:grid-cols-2"
       >
         {projects.map((project) => (
