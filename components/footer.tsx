@@ -11,12 +11,8 @@ export function Footer() {
   return (
     <motion.footer
       ref={ref}
-      animate={
-        isInView
-          ? { opacity: 1, y: 0 }
-          : { opacity: 0, y: 16 }
-      }
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       className="border-t border-border px-6 py-12"
     >
       <p className="text-center text-sm tracking-wide text-muted-foreground">

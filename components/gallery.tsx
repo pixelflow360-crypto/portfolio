@@ -29,7 +29,7 @@ function GalleryHeader({
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       style={{ opacity, y }}
       className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between"
     >
@@ -254,13 +254,6 @@ function ScrollProgress({ progress }: { progress: MotionValue<number> }) {
           <span key={image.src} className="h-1 w-1 rounded-full bg-muted-foreground/35" />
         ))}
       </div>
-      {/* Keep a real progress bar shape in the DOM, matching shadcn/ui's simple Progress anatomy. */}
-      <div className="sr-only">
-        <motion.div
-          style={{ scaleY, transformOrigin: "50% 0%" }}
-          className="h-full w-full bg-foreground"
-        />
-      </div>
     </motion.div>
   )
 }
@@ -303,10 +296,10 @@ export function Gallery() {
           {images.map((image, index) => (
             <motion.div
               key={image.src}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 32 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="relative aspect-[3/2] w-full overflow-hidden rounded-2xl border border-border bg-card"
             >
               <Image

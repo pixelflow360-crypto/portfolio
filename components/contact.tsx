@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 
+const EASE = [0.16, 1, 0.3, 1] as const
+
 const META_ITEMS = [
   { icon: Clock, label: "Responds within 24 hours" },
   { icon: Globe, label: "Working globally, based remotely" },
@@ -48,12 +50,8 @@ export function Contact() {
       >
         {/* ── Left column: context & info ─────────────────────────────── */}
         <motion.div
-          animate={
-            isInView
-              ? { opacity: 1, y: 0, filter: "blur(0px)" }
-              : { opacity: 0, y: 48, filter: "blur(8px)" }
-          }
-          transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+          transition={{ duration: 0.8, ease: EASE }}
           className="flex flex-col justify-between gap-10"
         >
           <div className="space-y-6">
@@ -129,12 +127,8 @@ export function Contact() {
 
         {/* ── Right column: form card ──────────────────────────────────── */}
         <motion.div
-          animate={
-            isInView
-              ? { opacity: 1, y: 0, filter: "blur(0px)" }
-              : { opacity: 0, y: 64, filter: "blur(8px)" }
-          }
-          transition={{ duration: 1.0, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 48 }}
+          transition={{ duration: 0.8, delay: 0.12, ease: EASE }}
         >
           <div className="rounded-2xl border border-border bg-card p-8 shadow-[0_20px_60px_-15px_color-mix(in_oklch,var(--foreground)_4%,transparent)] lg:p-10">
             <p className="mb-8 font-heading text-xl font-medium tracking-tight text-foreground">

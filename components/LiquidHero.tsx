@@ -356,5 +356,3 @@ export default function LiquidHero({ className }: LiquidHeroProps) {
     />
   )
 }
-
-export { LiquidHero as Component }

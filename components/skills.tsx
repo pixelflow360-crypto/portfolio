@@ -34,18 +34,20 @@ const LINES: Token[][] = [
   [C("// ● Available for new projects")],
 ]
 
+const EASE = [0.16, 1, 0.3, 1] as const
+
 // ─── Blinking cursor ──────────────────────────────────────────────────────────
-// Keyframe array [1, 0] gives Framer Motion explicit from/to values so the
-// repeat cycle actually oscillates instead of staying fixed at opacity 1.
+// Hard on/off keyframes (no fade) at a ~530ms cadence mimic a real terminal
+// caret / live typing. `times` holds each state flat so the blink reads crisp.
 function BlinkCursor() {
   return (
     <motion.span
       aria-hidden
-      animate={{ opacity: [1, 0] }}
+      animate={{ opacity: [1, 1, 0, 0] }}
       transition={{
-        duration: 0.8,
+        duration: 1.06,
+        times: [0, 0.5, 0.5, 1],
         repeat: Infinity,
-        repeatType: "reverse",
         ease: "linear",
       }}
       className="inline-block h-[1.1em] w-[2px] translate-y-[0.1em] bg-sky-400"
@@ -93,36 +95,20 @@ export function Skills() {
       id="skills"
       className="mx-auto max-w-6xl scroll-mt-24 px-6 py-28 md:py-36"
     >
-      {/* ── Section header — dramatic slow reveal ──────────────────────── */}
+      {/* ── Section header ─────────────────────────────────────────────── */}
       <div ref={headerRef} className="mb-14 md:mb-20">
-        <motion.div
-          animate={
-            isHeaderInView
-              ? { opacity: 1, y: 0, filter: "blur(0px)" }
-              : { opacity: 0, y: 56, filter: "blur(10px)" }
-          }
-          transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between"
-        >
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <motion.p
-              animate={
-                isHeaderInView
-                  ? { opacity: 1, y: 0, filter: "blur(0px)" }
-                  : { opacity: 0, y: 24, filter: "blur(6px)" }
-              }
-              transition={{ duration: 1.0, delay: 0, ease: [0.16, 1, 0.3, 1] }}
+              animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.8, ease: EASE }}
               className="mb-4 text-xs uppercase tracking-[0.4em] text-muted-foreground"
             >
               Capabilities
             </motion.p>
             <motion.h2
-              animate={
-                isHeaderInView
-                  ? { opacity: 1, y: 0, filter: "blur(0px)" }
-                  : { opacity: 0, y: 40, filter: "blur(8px)" }
-              }
-              transition={{ duration: 1.2, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+              transition={{ duration: 0.8, delay: 0.08, ease: EASE }}
               className="text-balance font-heading text-4xl font-medium tracking-tighter text-foreground sm:text-5xl md:text-6xl"
             >
               A toolkit built
@@ -131,18 +117,14 @@ export function Skills() {
             </motion.h2>
           </div>
           <motion.p
-            animate={
-              isHeaderInView
-                ? { opacity: 1, y: 0, filter: "blur(0px)" }
-                : { opacity: 0, y: 32, filter: "blur(6px)" }
-            }
-            transition={{ duration: 1.1, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+            transition={{ duration: 0.8, delay: 0.16, ease: EASE }}
             className="max-w-sm text-pretty text-base leading-relaxed text-muted-foreground md:text-right"
           >
             Design, research, and technology skills refined across 7+ years of
             product work.
           </motion.p>
-        </motion.div>
+        </div>
       </div>
 
       {/* ── Terminal window ────────────────────────────────────────────── */}
@@ -150,10 +132,10 @@ export function Skills() {
         ref={terminalRef}
         animate={
           isTerminalInView
-            ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }
-            : { opacity: 0, y: 48, scale: 0.985, filter: "blur(4px)" }
+            ? { opacity: 1, y: 0, scale: 1 }
+            : { opacity: 0, y: 40, scale: 0.99 }
         }
-        transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.8, ease: EASE }}
         className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-[0_32px_80px_-20px_rgba(0,0,0,0.7)]"
       >
         {/* Window chrome */}

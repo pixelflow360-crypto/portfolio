@@ -49,14 +49,25 @@ export function AmbientBackground() {
       }))
     }
 
-    const getColor = () =>
-      getComputedStyle(document.documentElement)
-        .getPropertyValue("--foreground")
-        .trim() || "oklch(0.93 0 0)"
+    // Read --foreground once, then only re-read when the theme class flips.
+    // Calling getComputedStyle every frame forces a style recalc and is the
+    // single biggest cost in this loop, so we cache it instead.
+    let color = "oklch(0.93 0 0)"
+    const readColor = () => {
+      color =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--foreground")
+          .trim() || "oklch(0.93 0 0)"
+    }
+
+    const themeObserver = new MutationObserver(readColor)
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    })
 
     const draw = () => {
       ctx.clearRect(0, 0, width, height)
-      const color = getColor()
       for (const p of particles) {
         p.x += p.vx
         p.y += p.vy
@@ -75,6 +86,7 @@ export function AmbientBackground() {
       raf = requestAnimationFrame(draw)
     }
 
+    readColor()
     resize()
     if (!reduced) {
       draw()
@@ -84,6 +96,7 @@ export function AmbientBackground() {
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener("resize", resize)
+      themeObserver.disconnect()
     }
   }, [])
 

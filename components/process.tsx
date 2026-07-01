@@ -328,12 +328,8 @@ export function Process() {
       <div className="relative mx-auto max-w-5xl px-6">
         <motion.div
           ref={headerRef}
-          animate={
-            isHeaderInView
-              ? { opacity: 1, y: 0, filter: "blur(0px)" }
-              : { opacity: 0, y: 48, filter: "blur(8px)" }
-          }
-          transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+          animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="mb-16 text-center md:mb-24"
         >
           <p className="mb-4 text-xs uppercase tracking-[0.4em] text-muted-foreground">
