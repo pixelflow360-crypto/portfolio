@@ -1,5 +1,4 @@
 import { AmbientBackground } from "@/components/ambient-background"
-import { CustomCursor } from "@/components/custom-cursor"
 import { Navigation } from "@/components/navigation"
 import { Hero } from "@/components/hero"
 import { Projects } from "@/components/projects"
@@ -12,7 +11,6 @@ export default function Page() {
   return (
     <>
       <AmbientBackground />
-      <CustomCursor />
       <Navigation />
       <main className="relative">
         <Hero />

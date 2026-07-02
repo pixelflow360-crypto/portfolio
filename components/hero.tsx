@@ -7,10 +7,7 @@ import Link from "next/link"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-const GridScan = dynamic(
-  () => import("@/components/GridScan").then((mod) => mod.GridScan),
-  { ssr: false },
-)
+const Silk = dynamic(() => import("@/components/Silk"), { ssr: false })
 
 const container: Variants = {
   hidden: {},
@@ -33,28 +30,12 @@ export function Hero() {
       className="relative flex min-h-screen items-center justify-center overflow-hidden px-6"
     >
       <div className="absolute inset-0">
-        <GridScan
-          sensitivity={0.55}
-          lineThickness={1}
-          linesColor="#2a2535"
-          scanColor="#e879f9"
-          scanOpacity={0.35}
-          gridScale={0.1}
-          lineStyle="solid"
-          lineJitter={0.08}
-          scanDirection="pingpong"
-          enablePost
-          bloomIntensity={0.12}
-          bloomThreshold={0.05}
-          bloomSmoothing={0.85}
-          chromaticAberration={0.002}
-          noiseIntensity={0.008}
-          scanGlow={0.5}
-          scanSoftness={2}
-          scanPhaseTaper={0.9}
-          scanDuration={2.4}
-          scanDelay={2.4}
-          snapBackDelay={250}
+        <Silk
+          speed={5}
+          scale={1}
+          color="#777777"
+          noiseIntensity={1.5}
+          rotation={0}
           className="h-full w-full"
         />
       </div>

@@ -109,13 +109,6 @@
   }
 }
 
-/* Hide native cursor on pointer-precise devices where custom cursor runs */
-@media (hover: hover) and (pointer: fine) {
-  .custom-cursor-active * {
-    cursor: none !important;
-  }
-}
-
 /* Ambient slow gradient drift */
 @keyframes ambient-drift {
   0% {

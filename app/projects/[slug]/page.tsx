@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { AmbientBackground } from "@/components/ambient-background"
-import { CustomCursor } from "@/components/custom-cursor"
 import { Footer } from "@/components/footer"
 import { Navigation } from "@/components/navigation"
 import { ProjectDetail } from "@/components/project-detail"
@@ -30,7 +29,6 @@ export default async function ProjectPage({ params }: Props) {
   return (
     <>
       <AmbientBackground />
-      <CustomCursor />
       <Navigation />
       <main className="relative min-h-screen">
         <ProjectDetail project={project} />

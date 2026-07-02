@@ -1,0 +1,30 @@
+.text-type {
+  display: inline-block;
+  white-space: pre-wrap;
+  contain: layout style;
+}
+
+.text-type__content {
+  display: inline;
+}
+
+.text-type__cursor {
+  margin-left: 0.25rem;
+  display: inline-block;
+  opacity: 1;
+  animation: text-type-cursor-blink 0.5s ease-in-out infinite alternate;
+  will-change: opacity;
+}
+
+.text-type__cursor--hidden {
+  visibility: hidden;
+}
+
+@keyframes text-type-cursor-blink {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.15;
+  }
+}
