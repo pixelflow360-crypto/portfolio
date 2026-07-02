@@ -1,12 +1,30 @@
+@font-face {
+  font-family: 'Absans';
+  src:
+    url('/fonts/Absans-Regular.woff2') format('woff2'),
+    url('/fonts/Absans-Regular.woff') format('woff'),
+    url('/fonts/Absans-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/*
+  Only Regular files are present in /public/fonts/.
+  Headings and UI that use font-bold/font-semibold rely on the same family;
+  add Absans-Bold files and a second @font-face at 700 when available.
+*/
+
 @import 'tailwindcss';
+@config "../tailwind.config.ts";
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-heading: var(--font-geist-sans), 'Geist Fallback';
-  --font-sans: var(--font-geist-sans), 'Geist Fallback';
+  --font-heading: 'Absans', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Absans', ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), 'Geist Mono Fallback';
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -65,10 +83,18 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background font-sans text-foreground;
   }
   html {
     @apply font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading;
   }
 }
 

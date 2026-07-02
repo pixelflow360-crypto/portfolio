@@ -67,29 +67,12 @@ export function Hero() {
         animate="visible"
         className="pointer-events-none relative z-10 mx-auto max-w-4xl text-center"
       >
-        <motion.p
-          variants={item}
-          className="mb-6 text-xs uppercase tracking-[0.4em] text-muted-foreground"
-        >
-          the vibe
-        </motion.p>
-
         <motion.h1
           variants={item}
           className="text-balance font-heading text-5xl font-medium leading-[0.95] tracking-tighter text-foreground text-glow sm:text-7xl md:text-8xl"
         >
-          Designing clarity
-          <br />
-          from complexity
+          Hi. I design websites.
         </motion.h1>
-
-        <motion.p
-          variants={item}
-          className="mx-auto mt-8 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg"
-        >
-          A research-led practice crafting calm, considered digital products —
-          where every interaction is intentional and nothing is decorative.
-        </motion.p>
 
         <motion.div
           variants={item}
