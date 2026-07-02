@@ -2,21 +2,20 @@
 
 import { useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { Menu, Moon, Sun, X } from "lucide-react"
-import { useTheme } from "@/components/theme-provider"
+import { Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const links = [
-  { label: "Work", href: "#work" },
-  { label: "Process", href: "#process" },
-  { label: "Skills", href: "#skills" },
-  { label: "Contact", href: "#contact" },
+  { label: "Work", href: "/#work" },
+  { label: "Process", href: "/#process" },
+  { label: "Skills", href: "/#skills" },
+  { label: "Contact", href: "/#contact" },
 ]
 
 function Monogram() {
   return (
     <a
-      href="#top"
+      href="/"
       aria-label="Home"
       className="group relative flex h-9 w-9 items-center justify-center"
     >
@@ -32,42 +31,6 @@ function Monogram() {
         <path d="M16 21 H24" />
       </svg>
     </a>
-  )
-}
-
-function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme()
-  return (
-    <button
-      type="button"
-      onClick={toggleTheme}
-      aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-      className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground transition-colors duration-300 hover:bg-foreground hover:text-background"
-    >
-      <AnimatePresence mode="wait" initial={false}>
-        {theme === "dark" ? (
-          <motion.span
-            key="moon"
-            initial={{ opacity: 0, rotate: -45 }}
-            animate={{ opacity: 1, rotate: 0 }}
-            exit={{ opacity: 0, rotate: 45 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Moon className="h-4 w-4" />
-          </motion.span>
-        ) : (
-          <motion.span
-            key="sun"
-            initial={{ opacity: 0, rotate: -45 }}
-            animate={{ opacity: 1, rotate: 0 }}
-            exit={{ opacity: 0, rotate: 45 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Sun className="h-4 w-4" />
-          </motion.span>
-        )}
-      </AnimatePresence>
-    </button>
   )
 }
 
@@ -108,18 +71,15 @@ export function Navigation() {
           ))}
         </ul>
 
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground md:hidden"
-          >
-            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground md:hidden"
+        >
+          {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+        </button>
       </nav>
 
       <AnimatePresence>

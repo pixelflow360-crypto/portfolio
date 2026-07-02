@@ -11,6 +11,8 @@ type Particle = {
   a: number
 }
 
+const PARTICLE_COLOR = "oklch(0.93 0 0)"
+
 export function AmbientBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
@@ -49,23 +51,6 @@ export function AmbientBackground() {
       }))
     }
 
-    // Read --foreground once, then only re-read when the theme class flips.
-    // Calling getComputedStyle every frame forces a style recalc and is the
-    // single biggest cost in this loop, so we cache it instead.
-    let color = "oklch(0.93 0 0)"
-    const readColor = () => {
-      color =
-        getComputedStyle(document.documentElement)
-          .getPropertyValue("--foreground")
-          .trim() || "oklch(0.93 0 0)"
-    }
-
-    const themeObserver = new MutationObserver(readColor)
-    themeObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    })
-
     const draw = () => {
       ctx.clearRect(0, 0, width, height)
       for (const p of particles) {
@@ -77,7 +62,7 @@ export function AmbientBackground() {
         if (p.y > height) p.y = 0
 
         ctx.beginPath()
-        ctx.fillStyle = `color-mix(in oklch, ${color} ${Math.round(
+        ctx.fillStyle = `color-mix(in oklch, ${PARTICLE_COLOR} ${Math.round(
           p.a * 100,
         )}%, transparent)`
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
@@ -86,23 +71,18 @@ export function AmbientBackground() {
       raf = requestAnimationFrame(draw)
     }
 
-    readColor()
     resize()
-    if (!reduced) {
-      draw()
-    }
+    if (!reduced) draw()
     window.addEventListener("resize", resize)
 
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener("resize", resize)
-      themeObserver.disconnect()
     }
   }, [])
 
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      {/* Slow drifting ambient glows */}
       <div
         className="absolute left-[10%] top-[8%] h-[42vw] w-[42vw] rounded-full blur-3xl"
         style={{

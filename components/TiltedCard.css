@@ -1,0 +1,79 @@
+.tilted-card-figure {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 1400px;
+  perspective-origin: center center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.tilted-card-mobile-alert {
+  position: absolute;
+  top: 1rem;
+  z-index: 4;
+  text-align: center;
+  font-size: 0.875rem;
+  display: none;
+  color: var(--muted-foreground);
+}
+
+@media (max-width: 640px) {
+  .tilted-card-mobile-alert {
+    display: block;
+  }
+  .tilted-card-tooltip {
+    display: none;
+  }
+}
+
+.tilted-card-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  border-radius: 15px;
+  will-change: transform;
+}
+
+.tilted-card-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  border-radius: 15px;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.tilted-card-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 15px;
+  pointer-events: none;
+  opacity: 0.55;
+  mix-blend-mode: soft-light;
+  transform: translateZ(42px);
+  backface-visibility: hidden;
+}
+
+.tilted-card-tooltip {
+  translate: 14px 14px;
+}
+
+.tilted-card-tooltip-panel {
+  min-width: 11rem;
+  max-width: 16rem;
+  border-radius: calc(var(--radius) * 1.2);
+  border: 1px solid var(--border);
+  background: color-mix(in oklch, var(--popover) 88%, transparent);
+  color: var(--popover-foreground);
+  padding: 0.75rem 1rem;
+  box-shadow:
+    0 4px 6px -1px color-mix(in oklch, var(--foreground) 6%, transparent),
+    0 12px 28px -8px color-mix(in oklch, var(--foreground) 18%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
