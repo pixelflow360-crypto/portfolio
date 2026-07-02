@@ -73,7 +73,6 @@ export function TiltedCard({
   const translateZ = useSpring(0, tiltSpring)
   const scale = useSpring(1, scaleSpring)
   const opacity = useSpring(0, tooltipSpring)
-  const tooltipScale = useSpring(0.92, tooltipSpring)
   const rotateFigcaption = useSpring(0, {
     stiffness: 280,
     damping: 28,
@@ -131,12 +130,10 @@ export function TiltedCard({
   function handleMouseEnter() {
     scale.set(scaleOnHover)
     opacity.set(1)
-    tooltipScale.set(1)
   }
 
   function handleMouseLeave() {
     opacity.set(0)
-    tooltipScale.set(0.92)
     scale.set(1)
     rotateX.set(0)
     rotateY.set(0)
@@ -200,20 +197,15 @@ export function TiltedCard({
 
       {hasTooltip && (
         <motion.figcaption
-          className="tilted-card-tooltip pointer-events-none absolute left-0 top-0 z-20"
+          className="tilted-card-caption"
           style={{
             x: smoothPointerX,
             y: smoothPointerY,
             opacity,
-            scale: tooltipScale,
             rotate: rotateFigcaption,
           }}
         >
-          <div className="tilted-card-tooltip-panel">
-            {tooltipContent ?? (
-              <span className="text-xs font-medium text-popover-foreground">{captionText}</span>
-            )}
-          </div>
+          {tooltipContent ?? captionText}
         </motion.figcaption>
       )}
     </figure>

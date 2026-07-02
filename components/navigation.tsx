@@ -12,24 +12,18 @@ const links = [
   { label: "Contact", href: "/#contact" },
 ]
 
-function Monogram() {
+function Logo() {
   return (
     <a
       href="/"
-      aria-label="Home"
-      className="group relative flex h-9 w-9 items-center justify-center"
+      aria-label="PixelFlow360 — Home"
+      className="group relative inline-flex shrink-0 items-center justify-center"
     >
-      <svg
-        viewBox="0 0 40 40"
-        className="h-7 w-7 text-foreground transition-transform duration-500 group-hover:rotate-90"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      >
-        <rect x="6" y="6" width="28" height="28" rx="2" className="opacity-40" />
-        <path d="M13 27 L20 13 L27 27" />
-        <path d="M16 21 H24" />
-      </svg>
+      <span className="inline-flex items-center justify-center rounded-sm border border-foreground/40 px-2 py-1.5 transition-transform duration-500 group-hover:rotate-90 sm:px-2.5">
+        <span className="font-heading text-[9px] font-medium leading-none tracking-tight text-foreground sm:text-[10px]">
+          PixelFlow360
+        </span>
+      </span>
     </a>
   )
 }
@@ -55,7 +49,7 @@ export function Navigation() {
       )}
     >
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6 md:h-20">
-        <Monogram />
+        <Logo />
 
         <ul className="hidden items-center gap-10 md:flex">
           {links.map((link) => (

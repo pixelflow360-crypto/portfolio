@@ -159,29 +159,7 @@ export function Projects() {
                     scaleOnHover={1.035}
                     showMobileWarning={false}
                     showTooltip
-                    tooltipContent={
-                      <div className="text-left">
-                        <p className="text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
-                          {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-                        </p>
-                        <p className="mt-1.5 font-heading text-base font-medium leading-snug tracking-tight text-foreground">
-                          {project.title}
-                        </p>
-                        <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-                          {project.description}
-                        </p>
-                        <ul className="mt-2.5 flex flex-wrap gap-1.5">
-                          {project.tags.map((tag) => (
-                            <li
-                              key={tag}
-                              className="rounded-full border border-border/80 bg-background/40 px-2 py-0.5 text-[10px] tracking-wide text-muted-foreground"
-                            >
-                              {tag}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    }
+                    captionText={`${String(index + 1).padStart(2, "0")} — ${project.title}`}
                   />
                 </Link>
               </motion.div>
