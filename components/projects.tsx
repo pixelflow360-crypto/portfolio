@@ -145,16 +145,21 @@ export function Projects() {
               >
                 <Link
                   href={`/projects/${project.slug}`}
-                  className="block rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  className={cn(
+                    "block outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                    !project.transparentArtwork && "rounded-2xl",
+                  )}
                   aria-label={`Open ${project.title}`}
                 >
                   <TiltedCard
                     imageSrc={project.image}
                     altText={project.title}
-                    containerHeight="min(72vh, 760px)"
-                    containerWidth="min(92vw, 980px)"
-                    imageHeight="min(72vh, 760px)"
-                    imageWidth="min(92vw, 980px)"
+                    imageAspect={
+                      project.transparentArtwork
+                        ? undefined
+                        : project.imageWidth / project.imageHeight
+                    }
+                    transparentArtwork={project.transparentArtwork}
                     rotateAmplitude={20}
                     scaleOnHover={1.035}
                     showMobileWarning={false}

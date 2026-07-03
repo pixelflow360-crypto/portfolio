@@ -4,6 +4,10 @@ export type Project = {
   description: string
   tags: string[]
   image: string
+  imageWidth: number
+  imageHeight: number
+  /** PNG exported with clip content disabled — show full canvas, no card frame. */
+  transparentArtwork?: boolean
   caseStudy?: string
   longDescription?: string
 }
@@ -18,6 +22,8 @@ export const projects: Project[] = [
     description: "A short placeholder description.",
     tags: ["UX Design"],
     image: "/projects/project-1/main.png",
+    imageWidth: 4320,
+    imageHeight: 3072,
     caseStudy: PLACEHOLDER_CASE_STUDY,
   },
   {
@@ -26,6 +32,8 @@ export const projects: Project[] = [
     description: "A short placeholder description.",
     tags: ["UX Design"],
     image: "/projects/project-2/main.png",
+    imageWidth: 4320,
+    imageHeight: 3072,
     caseStudy: PLACEHOLDER_CASE_STUDY,
   },
   {
@@ -34,6 +42,8 @@ export const projects: Project[] = [
     description: "A short placeholder description.",
     tags: ["UX Design"],
     image: "/projects/project-3/main.png",
+    imageWidth: 4320,
+    imageHeight: 3072,
     caseStudy: PLACEHOLDER_CASE_STUDY,
   },
   {
@@ -42,6 +52,9 @@ export const projects: Project[] = [
     description: "A short placeholder description.",
     tags: ["UX Design"],
     image: "/projects/project-4/main.png",
+    imageWidth: 4320,
+    imageHeight: 3525,
+    transparentArtwork: true,
     caseStudy: PLACEHOLDER_CASE_STUDY,
   },
   {
@@ -50,6 +63,9 @@ export const projects: Project[] = [
     description: "A short placeholder description.",
     tags: ["UX Design"],
     image: "/projects/project-5/main.png",
+    imageWidth: 4320,
+    imageHeight: 3072,
+    transparentArtwork: true,
     caseStudy: PLACEHOLDER_CASE_STUDY,
   },
 ]

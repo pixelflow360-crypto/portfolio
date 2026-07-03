@@ -3,16 +3,10 @@
 import dynamic from "next/dynamic"
 import { motion, type Variants } from "framer-motion"
 import { ArrowDown } from "lucide-react"
-import Link from "next/link"
-import { buttonVariants } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import TextType from "@/components/TextType"
 
 const Silk = dynamic(() => import("@/components/Silk"), { ssr: false })
 
-const container: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12, delayChildren: 0.15 } },
-}
 const item: Variants = {
   hidden: { opacity: 0, y: 30, filter: "blur(8px)" },
   visible: {
@@ -43,41 +37,24 @@ export function Hero() {
       <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-background/50 via-background/20 to-background" />
 
       <motion.div
-        variants={container}
         initial="hidden"
         animate="visible"
-        className="pointer-events-none relative z-10 mx-auto max-w-4xl text-center"
+        variants={item}
+        className="pointer-events-none relative z-10 flex w-full max-w-4xl items-center justify-center text-center"
       >
-        <motion.h1
-          variants={item}
-          className="text-balance font-heading text-5xl font-medium leading-[0.95] tracking-tighter text-foreground text-glow sm:text-7xl md:text-8xl"
-        >
-          Hi. I design websites.
+        <motion.h1 className="text-balance font-heading text-5xl font-medium leading-[0.95] tracking-tighter text-foreground text-glow sm:text-7xl md:text-8xl">
+          <TextType
+            as="span"
+            text="Hi. I design websites."
+            typingSpeed={115}
+            pauseDuration={1000}
+            deletingSpeed={50}
+            loop={false}
+            showCursor
+            cursorCharacter="_"
+            cursorBlinkDuration={1}
+          />
         </motion.h1>
-
-        <motion.div
-          variants={item}
-          className="pointer-events-auto mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row"
-        >
-          <Link
-            href="#work"
-            className={cn(
-              buttonVariants({ size: "lg" }),
-              "h-11 rounded-full px-8 text-sm tracking-wide",
-            )}
-          >
-            View selected work
-          </Link>
-          <Link
-            href="#contact"
-            className={cn(
-              buttonVariants({ variant: "outline", size: "lg" }),
-              "h-11 rounded-full px-8 text-sm tracking-wide",
-            )}
-          >
-            Start a project
-          </Link>
-        </motion.div>
       </motion.div>
 
       <motion.a

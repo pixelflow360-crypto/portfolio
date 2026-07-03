@@ -34,13 +34,16 @@
   transform-style: preserve-3d;
   border-radius: 15px;
   will-change: transform;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .tilted-card-img {
   position: absolute;
   top: 0;
   left: 0;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   border-radius: 15px;
   will-change: transform;
   transform: translateZ(0);
@@ -57,6 +60,27 @@
   mix-blend-mode: soft-light;
   transform: translateZ(42px);
   backface-visibility: hidden;
+}
+
+.tilted-card-figure--transparent {
+  overflow: visible;
+}
+
+.tilted-card-inner--transparent {
+  border-radius: 0;
+  overflow: visible;
+}
+
+.tilted-card-img--transparent {
+  position: relative;
+  top: auto;
+  left: auto;
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0;
+  object-fit: contain;
+  object-position: center;
 }
 
 .tilted-card-caption {

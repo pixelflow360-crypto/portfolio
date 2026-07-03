@@ -4,6 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { ArrowLeft } from "lucide-react"
+import { cn } from "@/lib/utils"
 import type { Project } from "@/data/projects"
 
 export function ProjectDetail({ project }: { project: Project }) {
@@ -29,13 +30,27 @@ export function ProjectDetail({ project }: { project: Project }) {
           {project.title}
         </h1>
 
-        <div className="relative mt-10 aspect-[16/10] overflow-hidden rounded-2xl border border-border bg-card">
+        <div
+          className={cn(
+            "mt-10 flex justify-center",
+            project.transparentArtwork
+              ? "bg-transparent"
+              : "overflow-hidden rounded-2xl border border-border bg-card",
+          )}
+        >
           <Image
             src={project.image}
             alt={project.title}
-            fill
-            className="object-cover object-top"
+            width={project.imageWidth}
+            height={project.imageHeight}
+            className={
+              project.transparentArtwork
+                ? "block h-auto w-full object-contain"
+                : "block h-auto w-full"
+            }
             sizes="(max-width: 896px) 100vw, 896px"
+            quality={100}
+            unoptimized
             priority
           />
         </div>
