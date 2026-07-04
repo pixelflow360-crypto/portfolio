@@ -257,7 +257,7 @@ export default function SplashCursor({
       gl.shaderSource(shader, shaderSource);
       gl.compileShader(shader);
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.trace(gl.getShaderInfoLog(shader));
+        return null;
       }
       return shader;
     }
@@ -270,7 +270,7 @@ export default function SplashCursor({
       gl.attachShader(program, fragmentShader);
       gl.linkProgram(program);
       if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        console.trace(gl.getProgramInfoLog(program));
+        return null;
       }
       return program;
     }
@@ -1207,6 +1207,7 @@ export default function SplashCursor({
     }
 
     window.addEventListener('mousedown', e => {
+      if (document.documentElement.dataset.modalOpen === 'true') return;
       const pointer = pointers[0];
       const posX = scaleByPixelRatio(e.clientX);
       const posY = scaleByPixelRatio(e.clientY);
@@ -1249,6 +1250,7 @@ export default function SplashCursor({
     window.addEventListener(
       'touchstart',
       e => {
+        if (document.documentElement.dataset.modalOpen === 'true') return;
         const touches = e.targetTouches;
         const pointer = pointers[0];
         for (let i = 0; i < touches.length; i++) {

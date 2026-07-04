@@ -1,82 +1,22 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useCallback, useEffect, useRef, useState } from "react"
-import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "framer-motion"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { TiltedCard } from "@/components/TiltedCard"
+import { useCallback, useRef, useState } from "react"
+import { motion, useInView, useReducedMotion } from "framer-motion"
 import { ProjectAccessModal } from "@/components/project-access-modal"
+import { ProjectCard } from "@/components/project-card"
 import { projects } from "@/data/projects"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { REVEAL_TRANSITION } from "@/lib/motion"
 import { isProjectUnlocked, unlockProject } from "@/lib/project-access"
-
-const SLIDE_EASE = [0.22, 1, 0.36, 1] as const
-const SLIDE_DURATION = 0.28
-
-const slideVariants = {
-  enter: (dir: number) => ({
-    x: dir >= 0 ? 36 : -36,
-    opacity: 0,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-  },
-  exit: (dir: number) => ({
-    x: dir >= 0 ? -36 : 36,
-    opacity: 0,
-  }),
-}
 
 export function Projects() {
   const router = useRouter()
-  const [index, setIndex] = useState(0)
-  const [direction, setDirection] = useState(0)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const reduced = useReducedMotion()
+  const headerInView = useInView(headerRef, { once: true, margin: "-60px 0px" })
   const [gateOpen, setGateOpen] = useState(false)
   const [gateProject, setGateProject] = useState<(typeof projects)[number] | null>(
     null,
-  )
-  const sectionRef = useRef<HTMLElement>(null)
-
-  const reduced = useReducedMotion()
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "center center", "end start"],
-  })
-
-  const headerY = useTransform(scrollYProgress, [0, 0.38], reduced ? [0, 0] : [120, 0])
-  const headerOpacity = useTransform(scrollYProgress, [0, 0.32], [0, 1])
-  const headerScale = useTransform(scrollYProgress, [0, 0.38], reduced ? [1, 1] : [0.9, 1])
-
-  const stageY = useTransform(scrollYProgress, [0.06, 0.52], reduced ? [0, 0] : [240, 0])
-  const stageOpacity = useTransform(scrollYProgress, [0.1, 0.48], [0, 1])
-  const stageScale = useTransform(scrollYProgress, [0.1, 0.52], reduced ? [1, 1] : [0.72, 1])
-  const stageRotateX = useTransform(scrollYProgress, [0.1, 0.52], reduced ? [0, 0] : [14, 0])
-
-  const navOpacity = useTransform(scrollYProgress, [0.28, 0.5], [0, 1])
-  const navX = useTransform(scrollYProgress, [0.28, 0.5], reduced ? [0, 0] : [24, 0])
-  const navXRight = useTransform(navX, (v) => -v)
-
-  const controlsOpacity = useTransform(scrollYProgress, [0.38, 0.6], [0, 1])
-  const controlsY = useTransform(scrollYProgress, [0.38, 0.6], reduced ? [0, 0] : [48, 0])
-
-  const total = projects.length
-  const project = projects[index]
-
-  const go = useCallback(
-    (dir: number) => {
-      setDirection(dir)
-      setIndex((i) => (i + dir + total) % total)
-    },
-    [total],
   )
 
   const openProject = useCallback(
@@ -104,150 +44,37 @@ export function Projects() {
     router.push(`/projects/${gateProject.slug}`)
   }, [gateProject, router])
 
-  useEffect(() => {
-    for (const offset of [-1, 1]) {
-      const img = new Image()
-      img.src = projects[(index + offset + total) % total].image
-    }
-  }, [index, total])
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (!sectionRef.current) return
-      const rect = sectionRef.current.getBoundingClientRect()
-      const inView = rect.top < window.innerHeight * 0.6 && rect.bottom > window.innerHeight * 0.25
-      if (!inView) return
-      if (e.key === "ArrowRight") go(1)
-      if (e.key === "ArrowLeft") go(-1)
-    }
-    window.addEventListener("keydown", onKey)
-    return () => window.removeEventListener("keydown", onKey)
-  }, [go])
-
   return (
-    <section
-      id="work"
-      ref={sectionRef}
-      className="relative flex min-h-[100svh] scroll-mt-24 flex-col bg-transparent px-4 py-24 md:px-6 md:py-28"
-    >
+    <section id="work" className="scroll-mt-24 px-6 py-28 md:py-36">
       <motion.div
-        style={{ y: headerY, opacity: headerOpacity, scale: headerScale }}
-        className="relative mx-auto mb-8 w-full max-w-6xl origin-top text-center md:mb-10"
+        ref={headerRef}
+        initial={reduced ? false : { opacity: 0, y: 48 }}
+        animate={
+          reduced || headerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 48 }
+        }
+        transition={{ ...REVEAL_TRANSITION, duration: 1 }}
+        className="mx-auto mb-14 max-w-6xl md:mb-20"
       >
         <p className="mb-4 text-xs uppercase tracking-[0.4em] text-muted-foreground">
           Portfolio
         </p>
-        <h2 className="font-heading text-4xl font-medium tracking-tighter text-foreground sm:text-5xl md:text-6xl">
+        <h2 className="max-w-3xl text-balance font-heading text-4xl font-medium tracking-tighter text-foreground sm:text-5xl md:text-6xl">
           Some of my work
         </h2>
-        <p className="mx-auto mt-4 max-w-lg text-pretty text-sm leading-relaxed text-muted-foreground">
-          One piece at a time — hover to explore, click to open the full write-up.
+        <p className="mt-4 max-w-xl text-pretty text-sm leading-relaxed text-muted-foreground md:text-base">
+          Selected projects — hover to explore, click to open the full write-up.
         </p>
       </motion.div>
 
-      <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center [perspective:1200px]">
-        <motion.div
-          style={{ opacity: navOpacity, x: navX }}
-          className="absolute left-0 top-1/2 z-20 hidden -translate-y-1/2 md:block"
-        >
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-lg"
-            aria-label="Previous project"
-            onClick={() => go(-1)}
-            className="rounded-full"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-        </motion.div>
-
-        <motion.div
-          style={{ opacity: navOpacity, x: navXRight }}
-          className="absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 md:block"
-        >
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-lg"
-            aria-label="Next project"
-            onClick={() => go(1)}
-            className="rounded-full"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </Button>
-        </motion.div>
-
-        <motion.div
-          style={{
-            y: stageY,
-            opacity: stageOpacity,
-            scale: stageScale,
-            rotateX: stageRotateX,
-          }}
-          className="flex w-full origin-center items-center justify-center will-change-transform"
-        >
-          <div
-            className="relative flex w-full items-center justify-center"
-            style={{ minHeight: "min(72vh, 760px)" }}
-          >
-            <AnimatePresence initial={false} custom={direction} mode="sync">
-              <motion.div
-                key={project.slug}
-                custom={direction}
-                variants={reduced ? undefined : slideVariants}
-                initial={reduced ? false : "enter"}
-                animate="center"
-                exit={reduced ? undefined : "exit"}
-                transition={{
-                  duration: reduced ? 0 : SLIDE_DURATION,
-                  ease: SLIDE_EASE,
-                }}
-                className="absolute inset-0 flex items-center justify-center will-change-[transform,opacity]"
-              >
-                <button
-                  type="button"
-                  onClick={() => openProject(project)}
-                  className={cn(
-                    "block cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                    !project.transparentArtwork && "rounded-2xl",
-                  )}
-                  aria-label={`Open ${project.title}`}
-                >
-                  <TiltedCard
-                    imageSrc={project.image}
-                    altText={project.title}
-                    imageAspect={
-                      project.transparentArtwork
-                        ? undefined
-                        : project.imageWidth / project.imageHeight
-                    }
-                    transparentArtwork={project.transparentArtwork}
-                    rotateAmplitude={20}
-                    scaleOnHover={1.035}
-                    showMobileWarning={false}
-                    showTooltip
-                    captionText={`${String(index + 1).padStart(2, "0")} — ${project.title}`}
-                  />
-                </button>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </motion.div>
-
-        <motion.div
-          style={{ opacity: controlsOpacity, y: controlsY }}
-          className="mt-6 flex gap-3 md:hidden"
-        >
-          <Button type="button" variant="outline" size="sm" onClick={() => go(-1)}>
-            <ChevronLeft className="h-4 w-4" />
-            Prev
-          </Button>
-          <Button type="button" variant="outline" size="sm" onClick={() => go(1)}>
-            Next
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </motion.div>
+      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 md:gap-y-16">
+        {projects.map((project, index) => (
+          <ProjectCard
+            key={project.slug}
+            project={project}
+            index={index}
+            onOpen={openProject}
+          />
+        ))}
       </div>
 
       {gateProject?.access ? (

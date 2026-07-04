@@ -5,10 +5,12 @@ import {
   motion,
   useInView,
   useMotionValueEvent,
+  useReducedMotion,
   useScroll,
   useTransform,
   type MotionValue,
 } from "framer-motion"
+import { EASE_OUT } from "@/lib/motion"
 
 type Step = {
   title: string
@@ -173,23 +175,33 @@ function ProcessStep({
   index,
   active,
   scrollYProgress,
+  reduced,
 }: {
   step: Step
   index: number
   active: boolean
   scrollYProgress: MotionValue<number>
+  reduced: boolean
 }) {
   const fromLeft = index % 2 === 0
   const start = index * 0.14
   const end = start + 0.22
 
-  const opacity = useTransform(scrollYProgress, [start, end], [0, 1])
+  const opacity = useTransform(
+    scrollYProgress,
+    [start, end],
+    reduced ? [1, 1] : [0, 1],
+  )
   const x = useTransform(
     scrollYProgress,
     [start, end],
-    [fromLeft ? -48 : 48, 0],
+    reduced ? [0, 0] : [fromLeft ? -48 : 48, 0],
   )
-  const mobileX = useTransform(scrollYProgress, [start, end], [-24, 0])
+  const mobileX = useTransform(
+    scrollYProgress,
+    [start, end],
+    reduced ? [0, 0] : [-24, 0],
+  )
 
   const { Icon } = step
 
@@ -302,6 +314,7 @@ export function Process() {
   const containerRef = useRef<HTMLElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
+  const reduced = useReducedMotion()
 
   const isHeaderInView = useInView(headerRef, { once: true, margin: "-60px 0px" })
 
@@ -310,9 +323,10 @@ export function Process() {
     offset: ["start 0.75", "end 0.35"],
   })
 
-  const lineScale = useTransform(scrollYProgress, [0, 1], [0, 1])
+  const lineScale = useTransform(scrollYProgress, [0, 1], reduced ? [1, 1] : [0, 1])
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
+    if (reduced) return
     const index = Math.min(steps.length - 1, Math.floor(value * steps.length))
     setActiveIndex(index)
   })
@@ -329,7 +343,7 @@ export function Process() {
         <motion.div
           ref={headerRef}
           animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.8, ease: EASE_OUT }}
           className="mb-16 text-center md:mb-24"
         >
           <p className="mb-4 text-xs uppercase tracking-[0.4em] text-muted-foreground">
@@ -364,8 +378,9 @@ export function Process() {
               key={step.title}
               step={step}
               index={index}
-              active={activeIndex === index}
+              active={reduced ? false : activeIndex === index}
               scrollYProgress={scrollYProgress}
+              reduced={!!reduced}
             />
           ))}
         </div>

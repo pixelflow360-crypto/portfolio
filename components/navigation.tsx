@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { CvDialog } from "@/components/cv-dialog"
+import { LogoMark } from "@/components/logo-mark"
 
 const links = [
   { label: "Work", href: "/#work" },
@@ -17,19 +18,10 @@ function Logo() {
   return (
     <a
       href="/"
-      aria-label="Shalva — Home"
+      aria-label="shacoux — Home"
       className="relative inline-flex shrink-0 items-center justify-center"
     >
-      <span className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-foreground/40 sm:h-9 sm:w-9">
-        <motion.span
-          className="inline-block font-heading text-sm font-medium leading-none text-foreground sm:text-base"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-          aria-hidden
-        >
-          S
-        </motion.span>
-      </span>
+      <LogoMark />
     </a>
   )
 }

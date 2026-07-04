@@ -23,6 +23,7 @@ const LINKS = [
 
 export function Contact() {
   const sectionRef = useRef<HTMLDivElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
   const isInView = useInView(sectionRef, { once: true, margin: "-80px 0px" })
 
   const [sent, setSent] = useState(false)
@@ -31,11 +32,11 @@ export function Contact() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
-    setTimeout(() => {
+    window.setTimeout(() => {
       setLoading(false)
       setSent(true)
-      e.currentTarget?.reset()
-      setTimeout(() => setSent(false), 4000)
+      formRef.current?.reset()
+      window.setTimeout(() => setSent(false), 4000)
     }, 800)
   }
 
@@ -135,7 +136,7 @@ export function Contact() {
               Send a message
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="name" className="text-sm text-muted-foreground">

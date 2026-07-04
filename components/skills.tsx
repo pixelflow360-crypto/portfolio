@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { motion, useInView } from "framer-motion"
+import { motion, useInView, useReducedMotion } from "framer-motion"
+import { EASE_OUT } from "@/lib/motion"
 
 // ─── Token helpers for syntax highlighting ────────────────────────────────────
 type Token = { t: string; c?: string }
@@ -34,7 +35,7 @@ const LINES: Token[][] = [
   [C("// ● Available for new projects")],
 ]
 
-const EASE = [0.16, 1, 0.3, 1] as const
+const EASE = EASE_OUT
 
 // ─── Blinking cursor ──────────────────────────────────────────────────────────
 // Hard on/off keyframes (no fade) at a ~530ms cadence mimic a real terminal
@@ -59,21 +60,27 @@ function BlinkCursor() {
 export function Skills() {
   const headerRef = useRef<HTMLDivElement>(null)
   const terminalRef = useRef<HTMLDivElement>(null)
+  const reduced = useReducedMotion()
 
   const isHeaderInView = useInView(headerRef, { once: true, margin: "-60px 0px" })
   const isTerminalInView = useInView(terminalRef, { once: true, margin: "-80px 0px" })
 
-  const [revealedLines, setRevealedLines] = useState(0)
-  const [typingDone, setTypingDone] = useState(false)
+  const [revealedLines, setRevealedLines] = useState(reduced ? LINES.length : 0)
+  const [typingDone, setTypingDone] = useState(!!reduced)
 
-  // Typewriter: reveal one line at a time once terminal enters view
   useEffect(() => {
+    if (reduced) {
+      setRevealedLines(LINES.length)
+      setTypingDone(true)
+      return
+    }
+
     if (!isTerminalInView) return
 
     let currentLine = 0
     let interval: ReturnType<typeof setInterval>
 
-    const startDelay = setTimeout(() => {
+    const startDelay = window.setTimeout(() => {
       interval = setInterval(() => {
         currentLine++
         setRevealedLines(currentLine)
@@ -81,14 +88,14 @@ export function Skills() {
           clearInterval(interval)
           setTypingDone(true)
         }
-      }, 75)
+      }, 85)
     }, 350)
 
     return () => {
-      clearTimeout(startDelay)
+      window.clearTimeout(startDelay)
       clearInterval(interval)
     }
-  }, [isTerminalInView])
+  }, [isTerminalInView, reduced])
 
   return (
     <section
@@ -132,8 +139,8 @@ export function Skills() {
         ref={terminalRef}
         animate={
           isTerminalInView
-            ? { opacity: 1, y: 0, scale: 1 }
-            : { opacity: 0, y: 40, scale: 0.99 }
+            ? { opacity: 1, y: 0 }
+            : { opacity: 0, y: 40 }
         }
         transition={{ duration: 0.8, ease: EASE }}
         className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-[0_32px_80px_-20px_rgba(0,0,0,0.7)]"

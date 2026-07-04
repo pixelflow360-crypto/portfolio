@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
+import { isTouchDevice, prefersReducedMotion } from "@/lib/device"
 
 type Particle = {
   x: number
@@ -15,39 +16,45 @@ const PARTICLE_COLOR = "oklch(0.93 0 0)"
 
 export function AmbientBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const [showCanvas, setShowCanvas] = useState(false)
 
   useEffect(() => {
+    setShowCanvas(!prefersReducedMotion() && !isTouchDevice())
+  }, [])
+
+  useEffect(() => {
+    if (!showCanvas) return
+
     const canvas = canvasRef.current
     if (!canvas) return
+
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-
     let width = 0
     let height = 0
-    let dpr = Math.min(window.devicePixelRatio || 1, 2)
+    let dpr = Math.min(window.devicePixelRatio || 1, 1.5)
     let particles: Particle[] = []
     let raf = 0
 
     const resize = () => {
       width = window.innerWidth
       height = window.innerHeight
-      dpr = Math.min(window.devicePixelRatio || 1, 2)
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5)
       canvas.width = width * dpr
       canvas.height = height * dpr
       canvas.style.width = `${width}px`
       canvas.style.height = `${height}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-      const count = Math.min(46, Math.floor((width * height) / 38000))
+      const count = Math.min(28, Math.floor((width * height) / 52000))
       particles = Array.from({ length: count }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.12,
-        vy: (Math.random() - 0.5) * 0.12,
-        r: Math.random() * 1.6 + 0.4,
-        a: Math.random() * 0.4 + 0.1,
+        vx: (Math.random() - 0.5) * 0.1,
+        vy: (Math.random() - 0.5) * 0.1,
+        r: Math.random() * 1.4 + 0.4,
+        a: Math.random() * 0.35 + 0.08,
       }))
     }
 
@@ -72,34 +79,34 @@ export function AmbientBackground() {
     }
 
     resize()
-    if (!reduced) draw()
-    window.addEventListener("resize", resize)
+    draw()
+    window.addEventListener("resize", resize, { passive: true })
 
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener("resize", resize)
     }
-  }, [])
+  }, [showCanvas])
 
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
       <div
-        className="absolute left-[10%] top-[8%] h-[42vw] w-[42vw] rounded-full blur-3xl"
+        className="ambient-blob absolute left-[10%] top-[8%] h-[42vw] w-[42vw] rounded-full blur-3xl"
         style={{
           background:
             "radial-gradient(circle, color-mix(in oklch, var(--glow) 8%, transparent), transparent 70%)",
-          animation: "ambient-drift 26s ease-in-out infinite",
         }}
       />
       <div
-        className="absolute bottom-[6%] right-[8%] h-[38vw] w-[38vw] rounded-full blur-3xl"
+        className="ambient-blob ambient-blob--reverse absolute bottom-[6%] right-[8%] h-[38vw] w-[38vw] rounded-full blur-3xl"
         style={{
           background:
             "radial-gradient(circle, color-mix(in oklch, var(--glow) 6%, transparent), transparent 70%)",
-          animation: "ambient-drift 34s ease-in-out infinite reverse",
         }}
       />
-      <canvas ref={canvasRef} className="absolute inset-0 opacity-70" />
+      {showCanvas ? (
+        <canvas ref={canvasRef} className="absolute inset-0 opacity-60" />
+      ) : null}
     </div>
   )
 }
