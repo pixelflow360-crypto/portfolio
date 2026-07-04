@@ -64,11 +64,15 @@
 
 .tilted-card-figure--transparent {
   overflow: visible;
+  background: transparent;
 }
 
 .tilted-card-inner--transparent {
   border-radius: 0;
   overflow: visible;
+  max-width: none;
+  max-height: none;
+  width: 100%;
 }
 
 .tilted-card-img--transparent {

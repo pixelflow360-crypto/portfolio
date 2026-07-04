@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useRef, useState } from "react"
 import {
   AnimatePresence,
@@ -11,14 +11,38 @@ import {
 } from "framer-motion"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { TiltedCard } from "@/components/TiltedCard"
+import { ProjectAccessModal } from "@/components/project-access-modal"
 import { projects } from "@/data/projects"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { isProjectUnlocked, unlockProject } from "@/lib/project-access"
 
-const EASE = [0.16, 1, 0.3, 1] as const
+const SLIDE_EASE = [0.22, 1, 0.36, 1] as const
+const SLIDE_DURATION = 0.28
+
+const slideVariants = {
+  enter: (dir: number) => ({
+    x: dir >= 0 ? 36 : -36,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (dir: number) => ({
+    x: dir >= 0 ? -36 : 36,
+    opacity: 0,
+  }),
+}
 
 export function Projects() {
+  const router = useRouter()
   const [index, setIndex] = useState(0)
+  const [direction, setDirection] = useState(0)
+  const [gateOpen, setGateOpen] = useState(false)
+  const [gateProject, setGateProject] = useState<(typeof projects)[number] | null>(
+    null,
+  )
   const sectionRef = useRef<HTMLElement>(null)
 
   const reduced = useReducedMotion()
@@ -49,10 +73,43 @@ export function Projects() {
 
   const go = useCallback(
     (dir: number) => {
+      setDirection(dir)
       setIndex((i) => (i + dir + total) % total)
     },
     [total],
   )
+
+  const openProject = useCallback(
+    (item: (typeof projects)[number]) => {
+      if (item.access === "pending") {
+        setGateProject(item)
+        setGateOpen(true)
+        return
+      }
+
+      if (item.access === "password" && !isProjectUnlocked(item.slug)) {
+        setGateProject(item)
+        setGateOpen(true)
+        return
+      }
+
+      router.push(`/projects/${item.slug}`)
+    },
+    [router],
+  )
+
+  const handleGateUnlock = useCallback(() => {
+    if (!gateProject) return
+    unlockProject(gateProject.slug)
+    router.push(`/projects/${gateProject.slug}`)
+  }, [gateProject, router])
+
+  useEffect(() => {
+    for (const offset of [-1, 1]) {
+      const img = new Image()
+      img.src = projects[(index + offset + total) % total].image
+    }
+  }, [index, total])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -81,7 +138,7 @@ export function Projects() {
           Portfolio
         </p>
         <h2 className="font-heading text-4xl font-medium tracking-tighter text-foreground sm:text-5xl md:text-6xl">
-          Conceptual Pieces
+          Some of my work
         </h2>
         <p className="mx-auto mt-4 max-w-lg text-pretty text-sm leading-relaxed text-muted-foreground">
           One piece at a time — hover to explore, click to open the full write-up.
@@ -131,22 +188,28 @@ export function Projects() {
           className="flex w-full origin-center items-center justify-center will-change-transform"
         >
           <div
-            className="flex w-full items-center justify-center"
+            className="relative flex w-full items-center justify-center"
             style={{ minHeight: "min(72vh, 760px)" }}
           >
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence initial={false} custom={direction} mode="sync">
               <motion.div
                 key={project.slug}
-                initial={{ opacity: 0, scale: 0.92, y: 28 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.94, y: -20 }}
-                transition={{ duration: 0.55, ease: EASE }}
-                className="flex w-full items-center justify-center"
+                custom={direction}
+                variants={reduced ? undefined : slideVariants}
+                initial={reduced ? false : "enter"}
+                animate="center"
+                exit={reduced ? undefined : "exit"}
+                transition={{
+                  duration: reduced ? 0 : SLIDE_DURATION,
+                  ease: SLIDE_EASE,
+                }}
+                className="absolute inset-0 flex items-center justify-center will-change-[transform,opacity]"
               >
-                <Link
-                  href={`/projects/${project.slug}`}
+                <button
+                  type="button"
+                  onClick={() => openProject(project)}
                   className={cn(
-                    "block outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                    "block cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                     !project.transparentArtwork && "rounded-2xl",
                   )}
                   aria-label={`Open ${project.title}`}
@@ -166,31 +229,10 @@ export function Projects() {
                     showTooltip
                     captionText={`${String(index + 1).padStart(2, "0")} — ${project.title}`}
                   />
-                </Link>
+                </button>
               </motion.div>
             </AnimatePresence>
           </div>
-        </motion.div>
-
-        <motion.div
-          style={{ opacity: controlsOpacity, y: controlsY }}
-          className="mt-8 flex items-center gap-3"
-        >
-          {projects.map((p, i) => (
-            <button
-              key={p.slug}
-              type="button"
-              aria-label={`Go to ${p.title}`}
-              aria-current={i === index ? "true" : undefined}
-              onClick={() => setIndex(i)}
-              className={cn(
-                "rounded-full transition-all duration-500 ease-out",
-                i === index
-                  ? "h-2 w-8 bg-foreground"
-                  : "h-2 w-2 bg-muted-foreground/40 hover:bg-muted-foreground",
-              )}
-            />
-          ))}
         </motion.div>
 
         <motion.div
@@ -207,6 +249,16 @@ export function Projects() {
           </Button>
         </motion.div>
       </div>
+
+      {gateProject?.access ? (
+        <ProjectAccessModal
+          open={gateOpen}
+          onOpenChange={setGateOpen}
+          mode={gateProject.access}
+          projectTitle={gateProject.title}
+          onUnlock={handleGateUnlock}
+        />
+      ) : null}
     </section>
   )
 }
